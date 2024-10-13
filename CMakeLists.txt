@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Tetris_SFML)
+project(Tetris)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,7 +20,7 @@ endif()
 find_package(nlohmann_json REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 
-add_executable(Tetris_SFML
+add_executable(Tetris
 Source/Main.cpp
 Source/Controllers/MainGameController.hpp
 Source/Controllers/MainGameController.cpp
@@ -44,7 +44,7 @@ Source/Utils/LeaderBoard.hpp
 Source/Utils/LeaderBoard.cpp
 )
 
-target_link_libraries(Tetris_SFML
+target_link_libraries(Tetris
 sfml-system
 sfml-window
 sfml-graphics
@@ -54,5 +54,5 @@ target_link_libraries (Tetris_Tests
 GTest::gtest_main
 )
 
-target_compile_definitions(Tetris_SFML PRIVATE RESOURCE_DIR="${CMAKE_SOURCE_DIR}/Resources")
+target_compile_definitions(Tetris PRIVATE RESOURCE_DIR="${CMAKE_SOURCE_DIR}/Resources")
 target_compile_definitions(Tetris_Tests PRIVATE RESOURCE_DIR="${CMAKE_SOURCE_DIR}/Resources")

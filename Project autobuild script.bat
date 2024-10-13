@@ -7,7 +7,7 @@ if not exist "%BUILD_DIR%" (
 
 cd %BUILD_DIR%
 
-set VCPKG_ROOT=D:/Develop/Programs/vcpkg
+set VCPKG_ROOT=D:/vcpkg
 
 cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake ..\
 
