@@ -63,7 +63,6 @@ protected:
     bool isCollidedGhost();
     bool isDead();
     void createParticle(std::vector<Particle>* particles);
-    int sign(int num);
     int calculateScore(int lineClearCount, int combo);
 
     void swapTextures();

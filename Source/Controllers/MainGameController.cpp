@@ -197,16 +197,6 @@ void MainGameController::createParticle(std::vector<Particle>* particles) {
     }
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="num"></param>
-/// <returns></returns>
-int MainGameController::sign(int num) {
-    if (num < 0) return -1;
-    else if (num > 0) return 1;
-    else return 0;
-}
 
 /// <summary>
 /// Метод для подсчета очков.
@@ -252,15 +242,13 @@ void MainGameController::startTetrisGame() {
     sf::Font fontGame;
     fontGame.loadFromFile(resourcePath + "/Fonts/Minecraft.ttf");
 
-    int holdPiece;
-    int moveX; 
-    int rotatePiece;
+    int holdPiece; //удерживание тетрамино
+    int rotatePiece; //вращение, если не 0, то актив.
     int colorPiece; 
     int hardDrop;
     int holded; 
     int moveLeft; 
-    int moveRight;   
-    int start;      
+    int moveRight; 
     score = 0;
 
     sf::Clock trackingFrameTime;         
@@ -293,14 +281,12 @@ restart:
             }
         }
 
-        start = 3;
         gameTimer = 0;
         gameDelay = 0.5;
-        moveX = 0;
         colorPiece = 0;
         hardDrop = 0;
         rotatePiece = 0;
-        holdPiece = -1;
+        holdPiece = -1; //фигура еще не удерживалась
         moveLeft = 0;
         moveRight = 0;
         holded = 0;
@@ -583,7 +569,7 @@ restart:
                 if (airSoftDropValue <= 0) {
                     for (int i = 0; i < 4; i++) {
                         previousPiecePosition[i] = currentPiece[i];
-                        currentPiece[i].x += sign(keyMoveRight - keyMoveLeft);
+                        currentPiece[i].x += keyMoveRight - keyMoveLeft;
                     }
 
                     if (!isCollided()) {
@@ -708,7 +694,7 @@ restart:
                 ///
                 /// \note Жёсткое падение значительно ускоряет процесс игры, так как мгновенно
                 ///       завершает движение фигуры до её фиксации на поле.
-                if (hardDrop && start <= 0) {
+                if (hardDrop) {
                     while (isCollided()) {
                         for (int i = 0; i < 4; i++) {
                             currentPiece[i].y++;
@@ -1245,7 +1231,6 @@ restart:
                     }
                 }
 
-                moveX = 0;
                 rotatePiece = 0;
                 gameDelay = 0.5;
                 hardDrop = 0;
@@ -1563,7 +1548,6 @@ restart:
                 gameWindow.display();
 
             }
-            start--;
             trackingGameTime.restart();
         }
 }
