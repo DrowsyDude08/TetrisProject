@@ -17,7 +17,7 @@ struct ScoreEntry {
 class LeaderBoard {
 protected:
     std::array<ScoreEntry, 2> scores;
-    std::string filename = "scores.json";
+    std::string filename = "LeaderBoard.json";
     std::string resourcePath = RESOURCE_DIR;
 public:
     LeaderBoard();

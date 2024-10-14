@@ -1,5 +1,10 @@
 #include "GameOverView.hpp"
-
+/// <summary>
+/// Конструктор для класса GameOverView
+/// Инициализирует просмотр game over с помощью предоставленных функций обратного вызова для перезапуска и завершения действий.
+/// </summary>
+/// <param name="onRestart">Объект функции который вызывается при нажатии на кнопку Retry</param>
+/// <param name="onExit">Объект функции который вызывается при нажатии на кнопку Main Menu</param>
 GameOverView::GameOverView(const std::function<void()>& onRestart, const std::function<void()>& onExit)
     : onRestart(onRestart), onExit(onExit) {
     if (!font.loadFromFile(resourcePath + "/Fonts/ShoraiSansStdNVar.ttf")) {

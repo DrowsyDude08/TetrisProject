@@ -14,8 +14,8 @@
 #include <vector>
 
 constexpr int WIDTH = 10;
-constexpr int HEIGHT = 25;
-constexpr int FRAMERATE = 75;
+constexpr int HEIGHT = 25; 
+constexpr int FRAMERATE = 75; //частота обновления экрана
 
 constexpr auto Z_TETROMINO = 0;
 constexpr auto L_TETROMINO = 1;
@@ -39,7 +39,7 @@ protected:
    
     int score = 0;
     bool isGameOver;
-    bool isScoreAdded = false;
+    bool scoreAddedToLeaderboard = false;
     std::string resourcePath = RESOURCE_DIR;
     int board[HEIGHT][WIDTH] = { 0 };
 

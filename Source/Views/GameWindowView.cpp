@@ -1,5 +1,12 @@
 #include "GameWindowView.hpp"
-
+/// <summary>
+/// Конструктор для класса GameWindowView. Инициализирует GameWindowView  с помощью данного окна рендеринга.
+/// 
+/// Он также настраивает кнопки главного меню, их текст и инициализирует кнопки завершения игры. 
+/// Шрифт для текста загружается из указанного источника. 
+/// Расположение кнопок, размеры и цвета устанавливаются в зависимости от размера игрового окна и предопределенных констант.
+/// </summary>
+/// <param name="window">Окно рендеринга SFML, которое будет использоваться для рендеринга игрового представления.</param>
 GameWindowView::GameWindowView(sf::RenderWindow& window)
     : window(window), palette(), hoveredButton(nullptr), selectedButtonIndex(0) {
     initializeButtons();
@@ -55,6 +62,12 @@ GameWindowView::GameWindowView(sf::RenderWindow& window)
     selectMainMenuButton(selectedButtonIndex);
 }
 
+/// <summary>
+/// Инициализирует кнопки главного меню и соответствующий им текст.
+/// Эта функция вычисляет расположение кнопок главного меню и их текст на основе размера окна и кнопок.
+/// Она также загружает шрифт для текста и устанавливает первоначальный вид кнопок.
+/// </summary>
+/// 
 void GameWindowView::initializeButtons() {
     float buttonWidth = 200;
     float buttonHeight = 50;
@@ -83,7 +96,9 @@ void GameWindowView::initializeButtons() {
     gameOverToMainMenuButton.setFillColor(palette.defaultButtonColor);
 }
 
-
+/// <summary>
+/// Функция отрисовки главного меню.
+/// </summary>
 void GameWindowView::drawMainMenu() {
     window.clear(palette.background);
     window.draw(mainMenuStartButton);
@@ -94,6 +109,15 @@ void GameWindowView::drawMainMenu() {
     window.draw(mainMenuExitText);
 }
 
+/// <summary>
+/// Метод, отслеживающий движение мыши в главном меню.
+/// 
+/// Эта функция обновляет указатель нажатой кнопки и выбранной кнопки в зависимости от положения мыши.
+/// Если мышь не находится в главном меню, она ничего не делает.
+/// </summary>
+/// <param name="mouseX"> X-координаты позиции мышки </param>
+/// <param name="mouseY"> X-координаты позиции мышки </param>
+/// <param name="gameState"> Текущее состояние игры </param>
 void GameWindowView::handleMainMenuMouseMove(int mouseX, int mouseY, GameState gameState) {
     if (gameState != GameState::MainMenu) {
         return;
@@ -118,6 +142,15 @@ void GameWindowView::handleMainMenuMouseMove(int mouseX, int mouseY, GameState g
     updateMainMenuButtonAppearance();
 }
 
+/// <summary>
+/// Отслеживает нажатие кнопок клавиатуры в главном меню.
+/// 
+/// Эта функция обновляет индекс выбранной кнопки и вызывает функцию выбора кнопки главного меню на основе ввода с клавиатуры.
+/// Если нажата клавиша со стрелкой вверх, индекс выбранной кнопки уменьшается и при необходимости переносится на последнюю кнопку.
+/// нажата клавиша со стрелкой вниз, индекс выбранной кнопки увеличивается и при необходимости переносится на первую кнопку.
+/// Если нажата клавиша enter, вызывается функция выбора кнопки главного меню с текущим индексом выбранной кнопки.
+/// </summary>
+/// <param name="event">Ивент с клавиатуры</param>
 void GameWindowView::handleMainMenuKeyboardInput(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Up) {
@@ -134,18 +167,31 @@ void GameWindowView::handleMainMenuKeyboardInput(const sf::Event& event) {
     }
 }
 
+/// <summary>
+/// Отслеживает нажата ли была кнопка в зависимости от координат мыши.
+/// </summary>
 bool GameWindowView::isStartButtonClicked(int mouseX, int mouseY) {
     return mainMenuStartButton.getGlobalBounds().contains(mouseX, mouseY);
 }
 
+/// <summary>
+/// Отслеживает нажата ли была кнопка в зависимости от координат мыши.
+/// </summary>
 bool GameWindowView::isChangeColorButtonClicked(int mouseX, int mouseY) {
     return mainMenuChangeColorButton.getGlobalBounds().contains(mouseX, mouseY);
 }
 
+/// <summary>
+/// Отслеживает нажата ли была кнопка в зависимости от координат мыши.
+/// </summary>
 bool GameWindowView::isExitButtonClicked(int mouseX, int mouseY) {
     return mainMenuExitButton.getGlobalBounds().contains(mouseX, mouseY);
 }
 
+/// <summary>
+/// Выбирает и подсвечивает кнопку главного меню в соответствии с заданным кейсом.
+/// </summary>
+/// <param name="index"> индекс выбранной кнопки </param>
 void GameWindowView::selectMainMenuButton(int index) {
     switch (index) {
     case 0:
@@ -164,6 +210,11 @@ void GameWindowView::selectMainMenuButton(int index) {
     updateMainMenuButtonAppearance();
 }
 
+/// <summary>
+/// Обновляет внешний вид кнопок в зависимости от выбранной.
+/// 
+/// Этот метод меняет цвет кнопки и текста на ней в зависимости от того была она выбрана или нет.
+/// </summary>
 void GameWindowView::updateMainMenuButtonAppearance() {
     mainMenuStartButton.setFillColor(hoveredButton == &mainMenuStartButton ? palette.selectedButtonColor : palette.defaultButtonColor);
     mainMenuChangeColorButton.setFillColor(hoveredButton == &mainMenuChangeColorButton ? palette.selectedButtonColor : palette.defaultButtonColor);
@@ -174,7 +225,11 @@ void GameWindowView::updateMainMenuButtonAppearance() {
     mainMenuExitText.setFillColor(hoveredButton == &mainMenuExitButton ? palette.selectedTextColor : palette.defaultTextColor);
 }
 
-
+/// <summary>
+/// Отрисовка Game over меню.
+/// </summary>
+/// <param name="leaderboard"> Таблица лидеров </param>
+/// <param name="currentScore"> текущий счет </param>
 void GameWindowView::drawGameOverMenu(const LeaderBoard& leaderboard, int currentScore) {
     sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
     background.setFillColor(sf::Color(palette.background.r, palette.background.g, palette.background.b, 150));
@@ -249,30 +304,39 @@ void GameWindowView::drawGameOverMenu(const LeaderBoard& leaderboard, int curren
     );
     window.draw(menuButtonText);
 }
+
+/// <summary>
+/// Отслеживает нажата ли была кнопка в зависимости от координат мыши.
+/// </summary>
 bool GameWindowView::isGameOverReplayClicked(int mouseX, int mouseY) {
     return gameOverReplayButton.getGlobalBounds().contains(mouseX, mouseY);
 }
+
+/// <summary>
+/// Отслеживает нажата ли была кнопка в зависимости от координат мыши.
+/// </summary>
 bool GameWindowView::isGameOverToMainMenuClicked(int mouseX, int mouseY) {
     return gameOverToMainMenuButton.getGlobalBounds().contains(mouseX, mouseY);
 }
-void GameWindowView::selectGameOverButton(int index) {
-    switch (index) {
-    case 0:
-        hoveredButton = &gameOverReplayButton;
-        break;
-    case 1:
-        hoveredButton = &gameOverToMainMenuButton;
-        break;
-    default:
-        hoveredButton = nullptr;
-        break;
-    }
-    updateGameOverButtonAppearance();
-}
-void GameWindowView::updateGameOverButtonAppearance() {
-    gameOverReplayButton.setFillColor(hoveredButton == &gameOverReplayButton ? palette.selectedButtonColor : palette.defaultButtonColor);
-    gameOverToMainMenuButton.setFillColor(hoveredButton == &gameOverToMainMenuButton ? palette.selectedButtonColor : palette.defaultButtonColor);
 
-    gameOverReplayText.setFillColor(hoveredButton == &gameOverReplayButton ? palette.selectedTextColor : palette.defaultTextColor);
-    gameOverToMainMenuText.setFillColor(hoveredButton == &gameOverToMainMenuButton ? palette.selectedTextColor : palette.defaultTextColor);
-}
+//void GameWindowView::selectGameOverButton(int index) {
+//    switch (index) {
+//    case 0:
+//        hoveredButton = &gameOverReplayButton;
+//        break;
+//    case 1:
+//        hoveredButton = &gameOverToMainMenuButton;
+//        break;
+//    default:
+//        hoveredButton = nullptr;
+//        break;
+//    }
+//    updateGameOverButtonAppearance();
+//}
+//void GameWindowView::updateGameOverButtonAppearance() {
+//    gameOverReplayButton.setFillColor(hoveredButton == &gameOverReplayButton ? palette.selectedButtonColor : palette.defaultButtonColor);
+//    gameOverToMainMenuButton.setFillColor(hoveredButton == &gameOverToMainMenuButton ? palette.selectedButtonColor : palette.defaultButtonColor);
+//
+//    gameOverReplayText.setFillColor(hoveredButton == &gameOverReplayButton ? palette.selectedTextColor : palette.defaultTextColor);
+//    gameOverToMainMenuText.setFillColor(hoveredButton == &gameOverToMainMenuButton ? palette.selectedTextColor : palette.defaultTextColor);
+//}

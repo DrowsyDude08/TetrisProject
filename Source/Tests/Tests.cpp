@@ -8,72 +8,72 @@ protected:
     LeaderBoard leaderboard;
 
     void SetUp() override {
-        // Задаем имя временного файла для тестов
+        // Р—Р°РґР°РµРј РёРјСЏ РІСЂРµРјРµРЅРЅРѕРіРѕ С„Р°Р№Р»Р° РґР»СЏ С‚РµСЃС‚РѕРІ
         leaderboard.setFilename("test_scores.json");
 
-        // Создаем JSON-файл с начальными данными
+        // РЎРѕР·РґР°РµРј JSON-С„Р°Р№Р» СЃ РЅР°С‡Р°Р»СЊРЅС‹РјРё РґР°РЅРЅС‹РјРё
         std::ofstream file(leaderboard.getFullPath());
         file << R"([{"playerName":"Player 1","score":1000}, {"playerName":"Player 2","score":500}])";
         file.close();
     }
 
     void TearDown() override {
-        // Удаляем временный файл после завершения каждого теста
+        // РЈРґР°Р»СЏРµРј РІСЂРµРјРµРЅРЅС‹Р№ С„Р°Р№Р» РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ РєР°Р¶РґРѕРіРѕ С‚РµСЃС‚Р°
         std::filesystem::remove(leaderboard.getFullPath());
     }
 };
 
-// Тест для добавления результата в таблицу
+// РўРµСЃС‚ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ СЂРµР·СѓР»СЊС‚Р°С‚Р° РІ С‚Р°Р±Р»РёС†Сѓ
 TEST_F(LeaderBoardTest, AddScoreTest) {
-    leaderboard.addScore("Player 3", 600);  // Новый игрок добавляется с 600 очками
+    leaderboard.addScore("Player 3", 600);  // РќРѕРІС‹Р№ РёРіСЂРѕРє РґРѕР±Р°РІР»СЏРµС‚СЃСЏ СЃ 600 РѕС‡РєР°РјРё
     auto scores = leaderboard.getScores();
 
-    EXPECT_EQ(scores[0].playerName, "Player 1");  // "Player 1" с 1000 очков остается на 1 месте
+    EXPECT_EQ(scores[0].playerName, "Player 1");  // "Player 1" СЃ 1000 РѕС‡РєРѕРІ РѕСЃС‚Р°РµС‚СЃСЏ РЅР° 1 РјРµСЃС‚Рµ
     EXPECT_EQ(scores[0].score, 1000);
-    EXPECT_EQ(scores[1].playerName, "Player 3");  // Новый игрок с 600 очков становится вторым
+    EXPECT_EQ(scores[1].playerName, "Player 3");  // РќРѕРІС‹Р№ РёРіСЂРѕРє СЃ 600 РѕС‡РєРѕРІ СЃС‚Р°РЅРѕРІРёС‚СЃСЏ РІС‚РѕСЂС‹Рј
     EXPECT_EQ(scores[1].score, 600);
 }
 
 
-// Тест для добавления более низкого результата
+// РўРµСЃС‚ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ Р±РѕР»РµРµ РЅРёР·РєРѕРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р°
 TEST_F(LeaderBoardTest, AddLowerScoreTest) {
-    leaderboard.addScore("Player 3", 600);  // Добавляем игрока с 200 очков
-    leaderboard.addScore("Player 4", 100);  // Попытка добавить игрока с меньшим результатом (100)
+    leaderboard.addScore("Player 3", 600);  // Р”РѕР±Р°РІР»СЏРµРј РёРіСЂРѕРєР° СЃ 200 РѕС‡РєРѕРІ
+    leaderboard.addScore("Player 4", 100);  // РџРѕРїС‹С‚РєР° РґРѕР±Р°РІРёС‚СЊ РёРіСЂРѕРєР° СЃ РјРµРЅСЊС€РёРј СЂРµР·СѓР»СЊС‚Р°С‚РѕРј (100)
 
     auto scores = leaderboard.getScores();
 
-    EXPECT_EQ(scores[0].playerName, "Player 1");  // "Player 1" с 1000 очков остается на 1 месте
+    EXPECT_EQ(scores[0].playerName, "Player 1");  // "Player 1" СЃ 1000 РѕС‡РєРѕРІ РѕСЃС‚Р°РµС‚СЃСЏ РЅР° 1 РјРµСЃС‚Рµ
     EXPECT_EQ(scores[0].score, 1000);
-    EXPECT_EQ(scores[1].playerName, "Player 3");  // "Player 3" с 600 очков остается на 2 месте
+    EXPECT_EQ(scores[1].playerName, "Player 3");  // "Player 3" СЃ 600 РѕС‡РєРѕРІ РѕСЃС‚Р°РµС‚СЃСЏ РЅР° 2 РјРµСЃС‚Рµ
     EXPECT_EQ(scores[1].score, 600);
 }
 
 
-// Тест для добавления более высокого результата
+// РўРµСЃС‚ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ Р±РѕР»РµРµ РІС‹СЃРѕРєРѕРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р°
 TEST_F(LeaderBoardTest, AddHigherScoreTest) {
-    leaderboard.addScore("Player 3", 1500);  // Новый результат больше текущего топ-1
+    leaderboard.addScore("Player 3", 1500);  // РќРѕРІС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ Р±РѕР»СЊС€Рµ С‚РµРєСѓС‰РµРіРѕ С‚РѕРї-1
     auto scores = leaderboard.getScores();
 
     EXPECT_EQ(scores[0].playerName, "Player 3");
     EXPECT_EQ(scores[0].score, 1500);
-    EXPECT_EQ(scores[1].playerName, "Player 1");  // Изменено: "Player 1"
+    EXPECT_EQ(scores[1].playerName, "Player 1");  // РР·РјРµРЅРµРЅРѕ: "Player 1"
     EXPECT_EQ(scores[1].score, 1000);
 }
 
-// Тест для проверки сохранения и загрузки
+// РўРµСЃС‚ РґР»СЏ РїСЂРѕРІРµСЂРєРё СЃРѕС…СЂР°РЅРµРЅРёСЏ Рё Р·Р°РіСЂСѓР·РєРё
 TEST_F(LeaderBoardTest, LoadAndSaveTest) {
     leaderboard.addScore("Player 3", 700);
 
-    // Сохраняем текущее состояние
+    // РЎРѕС…СЂР°РЅСЏРµРј С‚РµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
     leaderboard.save();
 
-    // Создаем новый объект LeaderBoard и проверяем, что данные загрузились корректно
+    // РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ РѕР±СЉРµРєС‚ LeaderBoard Рё РїСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РґР°РЅРЅС‹Рµ Р·Р°РіСЂСѓР·РёР»РёСЃСЊ РєРѕСЂСЂРµРєС‚РЅРѕ
     LeaderBoard newBoard;
     newBoard.setFilename("test_scores.json");
     newBoard.load();
     auto scores = newBoard.getScores();
 
-    EXPECT_EQ(scores[0].playerName, "Player 1");  // Изменено: "Player 1"
+    EXPECT_EQ(scores[0].playerName, "Player 1");  // РР·РјРµРЅРµРЅРѕ: "Player 1"
     EXPECT_EQ(scores[0].score, 1000);
     EXPECT_EQ(scores[1].playerName, "Player 3");
     EXPECT_EQ(scores[1].score, 700);

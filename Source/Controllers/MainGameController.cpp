@@ -2,6 +2,10 @@
 
 #include "MainGameController.hpp"
 
+/// <summary>
+/// Конструктор класса.
+/// Иницилизирует переменные.
+/// </summary>
 MainGameController::MainGameController()
     : window(sf::VideoMode(600, 720), "Tetris Game"), 
     gameWindowView(window),
@@ -12,6 +16,9 @@ MainGameController::MainGameController()
 
 }
 
+/// <summary>
+/// Метод запуска всей игры.
+/// </summary>
 void MainGameController::runGame() {
     while (window.isOpen()) {
         sf::Event event;
@@ -32,11 +39,13 @@ void MainGameController::runGame() {
             break;
         case GameState::InGame:
             startTetrisGame();
+            scoreAddedToLeaderboard = false; // Сбрасываем флаг при начале новой игры
             break;
         case GameState::GameOver:
             gameWindowView.drawGameOverMenu(leaderboard, score);
-			if (!isScoreAdded) {
+            if (!scoreAddedToLeaderboard) {
                 leaderboard.addScore("Игрок", score);
+                scoreAddedToLeaderboard = true; // Устанавливаем флаг
             }
             break;
         }
@@ -45,6 +54,10 @@ void MainGameController::runGame() {
     }
 }
 
+/// <summary>
+/// Отслеживание текущего состояния игры.
+/// </summary>
+/// <param name="event">Объект класса sf::event - событие</param>
 void MainGameController::handleMainMenuEvent(const sf::Event& event) {
     if (currentState == GameState::MainMenu) {
         if (event.type == sf::Event::MouseButtonPressed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)) {
@@ -89,10 +102,17 @@ void MainGameController::handleMainMenuEvent(const sf::Event& event) {
     }
 }
 
+/// <summary>
+/// Метод свапа текстур.
+/// </summary>
 void MainGameController::swapTextures() {
     std::swap(textureGhostPath, texturePiecePath);
     std::cout << "Textures swapped!\n";
 }
+/// <summary>
+/// Метод создания 'сумки' для хранения 7 тетрамино и их перемешивания.
+/// Гарантирует, что следующие 7 тетрамино будут все разные.
+/// </summary>
 std::vector<int> MainGameController::generateNewBag() {
     std::vector<int> templateBag;
 
@@ -112,6 +132,15 @@ std::vector<int> MainGameController::generateNewBag() {
     return newBag;
 }
 
+/// <summary>
+/// Проверяет, не пересекает ли текущая фигура границы игрового поля или другие фигуры.
+/// 
+/// Эта функция выполняет итерацию по каждой фигуре текущей фигуры и проверяет, находится ли ее положение в пределах границ игрового поля.
+/// Если какая - либо фигура находится за пределами границ, функция возвращает значение false.
+/// Она также проверяет, не сталкивается ли какая - либо фигура с другими фигурами на игровом поле.Если какая - либо фигура сталкивается, функция возвращает значение false.
+/// Если текущая фигура не сталкивается ни с какими границами или другими фигурами, функция возвращает значение true.
+/// </summary>
+/// <returns> True, если текущий фрагмент не сталкивается ни с какими границами или другими фрагментами, в противном случае значение false. </returns>
 bool MainGameController::isCollided() {
     for (int i = 0; i < 4; i++) {
         if (currentPiece[i].x < 0 || currentPiece[i].x >= WIDTH || currentPiece[i].y >= HEIGHT) {
@@ -124,6 +153,13 @@ bool MainGameController::isCollided() {
     return true;
 }
 
+/// <summary>
+/// Проверяет, не столкнулся ли 'призрак' фигуры с игровым полем или нижней границей.
+/// Эта функция используется для определения того, можно ли переместить текущую фигуру на один ряд вниз,
+/// не сталкиваясь с игровым полем или нижней границей.
+/// Он проверяет соответствие каждого блока фигуры игровому полю и нижней границе.
+/// </summary>
+/// <returns>True, если 'призрак' фигуры сталкивается с игровым полем или нижней границей, в противном случае значение false.</returns>
 bool MainGameController::isCollidedGhost() {
     for (int i = 0; i < 4; i++) {
         if (ghost[i].y >= HEIGHT) {
@@ -135,7 +171,9 @@ bool MainGameController::isCollidedGhost() {
     }
     return true;
 }
-
+/// <summary>
+/// Проверяет на проигрыш игрока.
+/// </summary>
 bool MainGameController::isDead() {
     for (int i = 0; i < 4; i++) {
         if (board[currentPiece[i].y][currentPiece[i].x]) {
@@ -145,6 +183,10 @@ bool MainGameController::isDead() {
     return false;
 }
 
+/// <summary>
+/// Создание и добавление частиц к заданному вектору(вылетают когда тетрамино падает)
+/// </summary>
+/// <param name="particles"></param>
 void MainGameController::createParticle(std::vector<Particle>* particles) {
     for (int i = 0; i < 4; i++) {
         Particle particle((currentPiece[i].x * 30) + 150 + 15 + (rand() % 60 - 30),
@@ -155,12 +197,23 @@ void MainGameController::createParticle(std::vector<Particle>* particles) {
     }
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="num"></param>
+/// <returns></returns>
 int MainGameController::sign(int num) {
     if (num < 0) return -1;
     else if (num > 0) return 1;
     else return 0;
 }
 
+/// <summary>
+/// Метод для подсчета очков.
+/// </summary>
+/// <param name="lineClearCount">Подсчитывает количество линий, очищенных игроком.</param>
+/// <param name="combo">количество линий, очищенных игроком подряд.</param>
+/// <returns>Посчитанный счет</returns>
 int MainGameController::calculateScore(int lineClearCount, int combo) {
     int points = 0;
     switch (lineClearCount) {
@@ -207,7 +260,8 @@ void MainGameController::startTetrisGame() {
     int holded; 
     int moveLeft; 
     int moveRight;   
-    int start;       
+    int start;      
+    score = 0;
 
     sf::Clock trackingFrameTime;         
     sf::Clock trackingGameTime;       
@@ -1033,8 +1087,6 @@ restart:
                     if (!isCollided() && lockDelayValue < 0) {
                         if (!holded) {
                             createParticle(&particles);
-                            createParticle(&particles);
-                            createParticle(&particles);
 
                             std::vector<PieceLock> pieceLockList;
                             for (int i = 0; i < 4; i++) {
@@ -1159,7 +1211,6 @@ restart:
                         lockCountValue = lockCount;
 
                         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                            createParticle(&particles);
                             createParticle(&particles);
                         }
                     }
